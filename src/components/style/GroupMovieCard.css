@@ -1,0 +1,39 @@
+/* --- Kortin perusrakenne --- */
+.group-movie-card {
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.movie-poster {
+  max-height: 600px ;
+  width: 100% ;
+  object-fit: contain ;
+  background-color: #000;
+}
+
+/* --- Kuvan hover-efekti --- */
+.group-movie-card .movie-link img {
+  height: 370px;
+  object-fit: cover;
+  background-color: #ddd;
+  transition: 0.3s ease;
+  object-position: top;
+}
+
+.group-movie-card .movie-link:hover img {
+  filter: brightness(85%);
+}
+
+/* --- Kommentin rajoitus kahteen riviin --- */
+.group-movie-card .comment-text {
+  --lines: 2;
+  line-height: 1.4;
+  line-clamp: var(--lines);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--lines);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-height: calc(var(--lines) * 1.4em);
+}
