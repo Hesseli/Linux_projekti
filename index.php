@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<h1>Tervetuloa Jesse!</h1>
+<h1>Tervetuloa Nginx-serverillä pyörivälle HTML sivulle!</h1>
 <p>Tämän sivun versio tulee GitHubista.</p>
 
 <h2>SQL-palvelimen aika:</h2>
@@ -19,11 +19,11 @@ async function loadTime() {
     document.getElementById("time").innerText = data.server_time;
 }
 
-// Hae aika sivun latautuessa
+// Hakee ajan sivun latautuessa
 loadTime();
 
-// Päivitä 5 sek välein
-setInterval(loadTime, 5000);
+// Päivittää 1 sek välein
+setInterval(loadTime, 1000);
 </script>
 
 </body>
