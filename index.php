@@ -26,5 +26,7 @@ loadTime();
 setInterval(loadTime, 1000);
 </script>
 
+<a href="/data-analysis">Avaa data-analyysi</a>
+
 </body>
 </html>

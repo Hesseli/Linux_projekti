@@ -1,2 +1,6 @@
 dbcreds.php
 *.secret.php
+
+*.pyc
+.env
+dbcreds.py
