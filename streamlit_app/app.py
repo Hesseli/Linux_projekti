@@ -4,14 +4,6 @@ import pandas as pd
 
 st.title("Data Analysis Dashboard")
 
-# MySQL-yhteys
-conn = mysql.connector.connect(
-    host="localhost",
-    user="demo",
-    password="H3553Lin#Kant4",
-    database="demo"
-)
-
 cursor = conn.cursor()
 cursor.execute("SELECT NOW() AS server_time")
 result = cursor.fetchone()

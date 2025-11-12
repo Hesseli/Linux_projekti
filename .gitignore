@@ -3,4 +3,4 @@ dbcreds.php
 
 *.pyc
 .env
-dbcreds.py
+/dbcreds.py
