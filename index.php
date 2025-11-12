@@ -84,7 +84,7 @@ loadTime();
 setInterval(loadTime, 1000);
 </script>
 
-<a href="/data-analysis">Avaa data-analyysi</a>
+<a href="/data-analysis">Viikkotehtävä 3: data-analyysi</a>
 
 </body>
 </html>
