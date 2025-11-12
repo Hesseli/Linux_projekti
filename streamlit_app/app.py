@@ -2,12 +2,12 @@ import streamlit as st
 import mysql.connector
 import pandas as pd
 
-st.title("Data Analysis Dashboard")
+st.title("Tervetuloa Streamlit-sovellukseen")
 
 cursor = conn.cursor()
 cursor.execute("SELECT NOW() AS server_time")
 result = cursor.fetchone()
-st.write("Database time:", result[0])
+st.write("Tietokannan aika:", result[0])
 
 st.markdown("### Esimerkkidata taulusta:")
 query = "SELECT * FROM some_table LIMIT 10"
