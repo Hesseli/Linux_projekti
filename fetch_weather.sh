@@ -1,11 +1,17 @@
-VENV_DIR="venv"
+#!/bin/bash
+
+VENV_DIR="/home/ubuntu/cron_assignment/venv"
+WORKDIR="/home/ubuntu/cron_assignment"
+
+cd $WORKDIR
 
 if [ ! -d "$VENV_DIR" ]; then
     echo "Luodaan virtuaaliympäristö..."
     python3 -m venv $VENV_DIR
 fi
 
-source $VENV_DIR/bin/activate
+# Aktivoi virtuaaliympäristö
+. $VENV_DIR/bin/activate
 
 if [ -f "requirements.txt" ]; then
     echo "Asennetaan riippuvuudet..."
