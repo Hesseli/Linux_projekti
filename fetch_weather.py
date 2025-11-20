@@ -23,9 +23,6 @@ CREATE TABLE IF NOT EXISTS weather_data (
 )
 ''')
 
-# Poistetaan aiemmat rivit
-cursor.execute('DELETE FROM weather_data')
-
 # Haetaan data API:sta
 response = requests.get(URL)
 data = response.json()
@@ -38,6 +35,16 @@ cursor.execute(
     'INSERT INTO weather_data (city, temperature, description, timestamp) VALUES (%s, %s, %s, %s)',
     (CITY, temp, desc, timestamp)
 )
+
+# Poistetaan vanhimmat rivit, jätetään 5 viimeisintä
+cursor.execute('''
+DELETE FROM weather_data
+WHERE id NOT IN (
+    SELECT id FROM (
+        SELECT id FROM weather_data ORDER BY timestamp DESC LIMIT 5
+    ) AS t
+)
+''')
 
 conn.commit()
 cursor.close()
