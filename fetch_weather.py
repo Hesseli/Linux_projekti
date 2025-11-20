@@ -1,9 +1,10 @@
 import requests
 import mysql.connector
 from datetime import datetime
-from dbcreds import DB_CONFIG  # tuodaan DB asetukset
+from dbcreds import DB_CONFIG, OWM_API_KEY
 
-API_KEY = 'YOUR_API_KEY'
+
+API_KEY = 'OWM_API_KEY'
 CITY = 'Helsinki'
 URL = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric'
 
@@ -21,6 +22,9 @@ CREATE TABLE IF NOT EXISTS weather_data (
     timestamp DATETIME
 )
 ''')
+
+# Poistetaan aiemmat rivit
+cursor.execute('DELETE FROM weather_data')
 
 # Haetaan data API:sta
 response = requests.get(URL)
