@@ -4,7 +4,7 @@ from datetime import datetime
 from dbcreds import DB_CONFIG, OWM_API_KEY
 
 
-API_KEY = 'OWM_API_KEY'
+API_KEY = OWM_API_KEY
 CITY = 'Helsinki'
 URL = f'https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric'
 
