@@ -1,7 +1,11 @@
+import sys
+import os
 import streamlit as st
 import mysql.connector
 import pandas as pd
 from dbcreds import DB_CONFIG
+
+sys.path.append(os.path.expanduser('~/cron_assignment'))
 
 st.set_page_config(page_title="Data Dashboard", layout="wide")
 
