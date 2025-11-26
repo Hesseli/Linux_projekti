@@ -1,4 +1,4 @@
-const client = mqtt.connect("ws://" + window.location.host + "/mqtt")
+const client = mqtt.connect("ws://" + window.location.hostname + ":9001")
 
 const statusEl = document.getElementById("status")
 const messages = document.getElementById("messages")
