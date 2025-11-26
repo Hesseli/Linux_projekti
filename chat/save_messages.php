@@ -1,10 +1,12 @@
 <?php
 $dbconfig = require __DIR__ . '/../../dbcreds.php';
 $chat = $dbconfig['chat'];
-$sender = trim($_POST['sender'] ?? 'vierailija');
+
+// Päätetään sender palvelimella
+$isAdmin = ($_GET['admin'] ?? '0') === '1';
+$sender = $isAdmin ? 'admin' : 'vierailija';
 
 try {
-    // PDO-yhteys
     $pdo = new PDO(
         "mysql:host={$chat['host']};dbname={$chat['db']};charset=utf8mb4",
         $chat['user'],
@@ -36,4 +38,4 @@ try {
     exit;
 }
 
-echo json_encode(['success' => true]);
+echo json_encode(['success' => true, 'sender' => $sender]);
