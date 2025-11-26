@@ -1,0 +1,30 @@
+body {
+    font-family: Arial;
+    background: #f7f7f7;
+}
+
+#chat-container {
+    width: 400px;
+    margin: 40px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#messages {
+    height: 250px;
+    border: 1px solid #ddd;
+    padding: 8px;
+    overflow-y: scroll;
+    margin-bottom: 10px;
+    background: #fafafa;
+}
+
+.status-green {
+    color: green;
+}
+
+.status-red {
+    color: red;
+}
