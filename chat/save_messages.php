@@ -3,7 +3,7 @@ $dbconfig = require __DIR__ . '/../../dbcreds.php';
 $chat = $dbconfig['chat'];
 
 // Päätetään sender palvelimella
-$isAdmin = ($_GET['admin'] ?? '0') === '1';
+$isAdmin = ($_POST['admin'] ?? '0') === '1';
 $sender = $isAdmin ? 'admin' : 'vierailija';
 
 try {

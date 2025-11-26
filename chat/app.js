@@ -51,16 +51,16 @@ async function sendMessage() {
     const text = msgBox.value.trim()
     if (!text) return
 
-    // Lähetetään vain viesti
+    // Lähetetään POSTilla viesti + admin-parametri
     try {
+        const isAdmin = window.location.search.includes("admin=1") ? 1 : 0
         const res = await fetch("/chat/save_messages.php", {
             method: "POST",
             headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: `message=${encodeURIComponent(text)}`
+            body: `message=${encodeURIComponent(text)}&admin=${isAdmin}`
         })
         const data = await res.json()
         if (data.success) {
-            // Julkaistaan MQTT:llä palvelimen palauttama viesti
             client.publish("chat/messages", `${data.sender}:${text}`)
         }
     } catch (e) {
