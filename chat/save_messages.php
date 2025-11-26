@@ -1,33 +1,39 @@
 <?php
-$dbconfig = require 'dbcreds.php';
+$dbconfig = require __DIR__ . '/../../dbcreds.php';
 $chat = $dbconfig['chat'];
+$sender = trim($_POST['sender'] ?? 'vierailija');
 
-// Luodaan PDO-yhteys chat-kantaan
-$pdo = new PDO(
-    "mysql:host={$chat['host']};dbname={$chat['db']};charset=utf8mb4",
-    $chat['user'],
-    $chat['pass'],
-    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-);
+try {
+    // PDO-yhteys
+    $pdo = new PDO(
+        "mysql:host={$chat['host']};dbname={$chat['db']};charset=utf8mb4",
+        $chat['user'],
+        $chat['pass'],
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
+} catch (Exception $e) {
+    file_put_contents('/tmp/chat_error.log', "DB CONNECT ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
+    http_response_code(500);
+    echo json_encode(['error' => 'Database connection failed']);
+    exit;
+}
 
 $message = trim($_POST['message'] ?? '');
+
 if ($message === '') {
     http_response_code(400);
     echo json_encode(['error' => 'Empty message']);
     exit;
 }
 
-// Tallennetaan viesti
-$stmt = $pdo->prepare("INSERT INTO chat_messages (message) VALUES (:msg)");
-$stmt->execute(['msg' => $message]);
-
-// Poistetaan vanhimmat, jätetään 10 viimeisintä
-$stmt = $pdo->query("
-    DELETE FROM chat_messages
-    WHERE id NOT IN (
-        SELECT id FROM (SELECT id FROM chat_messages ORDER BY created_at DESC LIMIT 10) AS t
-    )
-");
+try {
+    $stmt = $pdo->prepare("INSERT INTO chat_messages (message, sender) VALUES (:msg, :sender)");
+    $stmt->execute(['msg' => $message, 'sender' => $sender]);
+} catch (Exception $e) {
+    file_put_contents('/tmp/chat_error.log', "INSERT ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
+    http_response_code(500);
+    echo json_encode(['error' => 'DB insert failed']);
+    exit;
+}
 
 echo json_encode(['success' => true]);
-?>
