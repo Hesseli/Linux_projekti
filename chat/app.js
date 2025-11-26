@@ -51,11 +51,12 @@ async function sendMessage() {
 
     // Tallennetaan tietokantaan
     try {
-        await fetch("/chat/save_message.php", {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: `message=${encodeURIComponent(text)}`
-        })
+    await fetch("/chat/save_messages.php", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: `message=${encodeURIComponent(text)}`
+    })
+
     } catch (e) {
         console.error("Viestiä ei voitu tallentaa:", e)
     }
