@@ -12,3 +12,11 @@ services:
       - ./config:/mosquitto/config
       - ./data:/mosquitto/data
       - ./log:/mosquitto/log
+
+# Tavallinen MQTT
+listener 1883
+protocol mqtt
+
+# MQTT over WebSockets
+listener 9001
+protocol websockets
