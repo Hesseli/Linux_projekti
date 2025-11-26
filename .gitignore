@@ -1,6 +1,7 @@
 dbcreds.php
 *.secret.php
-
+mosquitto/data/
+mosquitto/log/
 *.pyc
 .env
 /dbcreds.py
