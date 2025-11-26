@@ -1,13 +1,17 @@
 <?php
 header("Content-Type: application/json");
 
+// Ladataan dbcreds
 $config = include __DIR__ . "/../dbcreds.php";
 
+// Käytetään 'demo'-tietokantaa
+$demo = $config['demo'];
+
 $conn = new mysqli(
-    $config['host'],
-    $config['user'],
-    $config['pass'],
-    $config['db']
+    $demo['host'],
+    $demo['user'],
+    $demo['pass'],
+    $demo['db']
 );
 
 if ($conn->connect_error) {
