@@ -14,6 +14,10 @@ data:
             try_files $uri $uri/ /index.html;
         }
 
+        location /kube/ {
+            try_files $uri $uri/ /index.html;
+        }
+
         location /kube/api/ {
             proxy_pass http://kube-backend:8080/;
             proxy_set_header Host $host;
