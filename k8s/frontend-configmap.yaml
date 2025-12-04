@@ -8,21 +8,44 @@ data:
     <html>
     <head><meta charset="utf-8"><title>Kube App</title></head>
     <body>
-      <h1>Kubernetes multi-container demo</h1>
-      <p>Tämä on frontendiä palveleva staattinen sivu (ConfigMap -> nginx).</p>
-      <p><a href="/kube/api/">Kutsu backend (API)</a></p>
-      <div id="api">Ladataan...</div>
+      <h2>Vieraskirja</h2>
+      <form id="guestForm">
+        <input type="text" id="name" placeholder="Nimimerkki" required>
+        <input type="text" id="message" placeholder="Terveiset" required>
+        <button type="submit">Lähetä</button>
+      </form>
+
+      <ul id="guestList"></ul>
+      
       <script>
-        async function loadApi() {
-          try {
-            const r = await fetch('/kube/api/');
-            const t = await r.text();
-            document.getElementById('api').innerText = t;
-          } catch(e) {
-            document.getElementById('api').innerText = 'API virhe: ' + e;
-          }
+        const form = document.getElementById("guestForm");
+        const list = document.getElementById("guestList");
+
+        async function loadMessages() {
+          const res = await fetch('/kube/api/guestbook.php');
+          const data = await res.json();
+          list.innerHTML = '';
+          data.forEach(m => {
+            const li = document.createElement('li');
+            li.textContent = `${m.name} (${m.created_at}): ${m.message}`;
+            list.appendChild(li);
+          });
         }
-        loadApi();
+
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const name = document.getElementById("name").value;
+          const message = document.getElementById("message").value;
+          await fetch('/kube/api/guestbook.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name, message})
+          });
+          form.reset();
+          loadMessages();
+        });
+        
+        loadMessages();
       </script>
     </body>
     </html>

@@ -1,0 +1,33 @@
+<?php
+// dbcreds.php palauttaa taulukon salasanoineen
+$dbs = include '/var/www/dbcreds.php';
+$db = $dbs['demo'];
+
+$conn = new mysqli($db['host'], $db['user'], $db['pass'], $db['db']);
+
+if ($conn->connect_error) {
+    http_response_code(500);
+    echo json_encode(["error" => "DB connection failed"]);
+    exit;
+}
+
+// POST: lisää uusi viesti
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['name'] ?? '';
+    $message = $_POST['message'] ?? '';
+    $stmt = $conn->prepare("INSERT INTO guestbook (name, message) VALUES (?, ?)");
+    $stmt->bind_param("ss", $name, $message);
+    $stmt->execute();
+    $stmt->close();
+    echo json_encode(["status" => "ok"]);
+    exit;
+}
+
+// GET: hae kaikki viestit
+$result = $conn->query("SELECT name, message, created_at FROM guestbook ORDER BY id DESC");
+$messages = [];
+while ($row = $result->fetch_assoc()) {
+    $messages[] = $row;
+}
+header('Content-Type: application/json');
+echo json_encode($messages);

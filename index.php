@@ -86,6 +86,7 @@ setInterval(loadTime, 1000);
 
 <a href="/data-analysis">data-analyysi</a>
 <a href="/chat">chat</a>
+<a href="/kube">kubernetes</a>
 
 </body>
 </html>
