@@ -10,8 +10,7 @@ data:
         root /usr/share/nginx/html;
         index index.html;
 
-        location /kube/ {
-            alias /usr/share/nginx/html/;
+        location / {
             try_files $uri $uri/ /index.html;
         }
 
