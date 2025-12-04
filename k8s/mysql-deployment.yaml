@@ -21,6 +21,9 @@ spec:
             secretKeyRef:
               name: db-credentials
               key: MYSQL_ROOT_PASSWORD
+              optional: true
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: "yes"
         - name: MYSQL_DATABASE
           valueFrom:
             secretKeyRef:
