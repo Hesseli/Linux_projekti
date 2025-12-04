@@ -21,13 +21,14 @@ spec:
         - name: frontend-html
           mountPath: /usr/share/nginx/html
       - name: backend
-        # kevyt echo-server; palauttaa halutun tekstin
-        image: hashicorp/http-echo:0.2.3
-        args: ["-text", "Hello from backend (kubernetes)", "-listen", ":5678"]
+        image: php:7.4-apache
         ports:
-        - containerPort: 5678
-      volumes:
-      - name: frontend-html
-        configMap:
-          name: kube-frontend-html
-          defaultMode: 420
+          - containerPort: 80
+        volumeMounts:
+          - name: backend-php
+            mountPath: /var/www/html/guestbook.php
+            subPath: guestbook.php
+        volumes:
+          - name: backend-php
+            configMap:
+              name: kube-backend-php
