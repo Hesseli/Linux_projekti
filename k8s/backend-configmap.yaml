@@ -5,7 +5,8 @@ metadata:
 data:
   guestbook.php: |
     <?php
-    // dbcreds.php palauttaa taulukon salasanoineen
+    header('Content-Type: application/json');
+    
     $dbconfig = require '/var/www/dbcreds.php';
     $demo = $dbconfig['demo'];
 
@@ -23,33 +24,46 @@ data:
         exit;
     }
 
-    $name = trim($_POST['name'] ?? '');
-    $message = trim($_POST['message'] ?? '');
-
-    if ($name === '' || $message === '') {
-        http_response_code(400);
-        echo json_encode(['error' => 'Empty name or message']);
+    // GET: Hae kaikki viestit
+    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        try {
+            $stmt = $pdo->query("SELECT name, message, created_at FROM guestbook ORDER BY id DESC");
+            $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($messages);
+        } catch (Exception $e) {
+            file_put_contents('/tmp/guestbook_error.log', "SELECT ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
+            http_response_code(500);
+            echo json_encode(['error' => 'Query failed']);
+        }
         exit;
     }
 
-    try {
-        $stmt = $pdo->prepare("INSERT INTO guestbook (name, message, created_at) VALUES (:name, :message, NOW())");
-        $stmt->execute(['name' => $name, 'message' => $message]);
-    } catch (Exception $e) {
-        file_put_contents('/tmp/guestbook_error.log', "INSERT ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
-        http_response_code(500);
-        echo json_encode(['error' => 'DB insert failed']);
+    // POST: Tallenna uusi viesti
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $name = trim($_POST['name'] ?? '');
+        $message = trim($_POST['message'] ?? '');
+
+        if ($name === '' || $message === '') {
+            http_response_code(400);
+            echo json_encode(['error' => 'Empty name or message']);
+            exit;
+        }
+
+        try {
+            $stmt = $pdo->prepare("INSERT INTO guestbook (name, message, created_at) VALUES (:name, :message, NOW())");
+            $stmt->execute(['name' => $name, 'message' => $message]);
+            
+            // Hae kaikki viestit
+            $stmt = $pdo->query("SELECT name, message, created_at FROM guestbook ORDER BY id DESC");
+            $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            echo json_encode($messages);
+        } catch (Exception $e) {
+            file_put_contents('/tmp/guestbook_error.log', "INSERT ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
+            http_response_code(500);
+            echo json_encode(['error' => 'DB insert failed']);
+        }
         exit;
     }
 
-    // Hae kaikki viestit
-    try {
-        $stmt = $pdo->query("SELECT name, message, created_at FROM guestbook ORDER BY id DESC");
-        $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (Exception $e) {
-        file_put_contents('/tmp/guestbook_error.log', "SELECT ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
-        $messages = [];
-    }
-
-    header('Content-Type: application/json');
-    echo json_encode($messages);
+    http_response_code(405);
+    echo json_encode(['error' => 'Method not allowed']);
