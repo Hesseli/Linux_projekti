@@ -39,8 +39,8 @@ data:
 
           await fetch('/kube/api/guestbook.php', {
             method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: new URLSearchParams({name, message})
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name, message})
           });
           form.reset();
           loadMessages();

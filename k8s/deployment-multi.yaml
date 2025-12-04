@@ -59,7 +59,7 @@ spec:
             apache2-foreground
         volumeMounts:
           - name: backend-php
-            mountPath: /var/www/html/kube/api/guestbook.php
+            mountPath: /var/www/html/guestbook.php
             subPath: guestbook.php
           - name: dbcreds
             mountPath: /var/www/dbcreds.php
