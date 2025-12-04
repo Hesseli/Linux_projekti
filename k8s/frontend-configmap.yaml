@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-frontend-html
+data:
+  index.html: |
+    <!doctype html>
+    <html>
+    <head><meta charset="utf-8"><title>Kube App</title></head>
+    <body>
+      <h1>Kubernetes multi-container demo</h1>
+      <p>Tämä on frontendiä palveleva staattinen sivu (ConfigMap -> nginx).</p>
+      <p><a href="/kube/api/">Kutsu backend (API)</a></p>
+      <div id="api">Ladataan...</div>
+      <script>
+        async function loadApi() {
+          try {
+            const r = await fetch('/kube/api/');
+            const t = await r.text();
+            document.getElementById('api').innerText = t;
+          } catch(e) {
+            document.getElementById('api').innerText = 'API virhe: ' + e;
+          }
+        }
+        loadApi();
+      </script>
+    </body>
+    </html>

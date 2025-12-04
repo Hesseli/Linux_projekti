@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kube-multi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kube-multi
+  template:
+    metadata:
+      labels:
+        app: kube-multi
+    spec:
+      containers:
+      - name: frontend
+        image: nginx:stable
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: frontend-html
+          mountPath: /usr/share/nginx/html
+      - name: backend
+        # kevyt echo-server; palauttaa halutun tekstin
+        image: hashicorp/http-echo:0.2.3
+        args: ["-text", "Hello from backend (kubernetes)", "-listen", ":5678"]
+        ports:
+        - containerPort: 5678
+      volumes:
+      - name: frontend-html
+        configMap:
+          name: kube-frontend-html
+          defaultMode: 420
