@@ -14,7 +14,7 @@ data:
             try_files $uri $uri/ /index.html;
         }
 
-        location /api/ {
+        location /kube/api/ {
             proxy_pass http://kube-backend:8080/;
             proxy_set_header Host $host;
             proxy_set_header X-Real-IP $remote_addr;
