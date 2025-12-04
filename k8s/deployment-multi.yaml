@@ -11,27 +11,27 @@ spec:
     metadata:
       labels:
         app: kube-multi
-spec:
-  containers:
-  - name: frontend
-    image: nginx:stable
-    ports:
-      - containerPort: 80
-    volumeMounts:
-      - name: frontend-html
-        mountPath: /usr/share/nginx/html
-  - name: backend
-    image: php:7.4-apache
-    ports:
-      - containerPort: 80
-    volumeMounts:
-      - name: backend-php
-        mountPath: /var/www/html/guestbook.php
-        subPath: guestbook.php
-  volumes:
-    - name: frontend-html
-      configMap:
-        name: kube-frontend-html
-    - name: backend-php
-      configMap:
-        name: kube-backend-php
+    spec:
+      containers:
+      - name: frontend
+        image: nginx:stable
+        ports:
+          - containerPort: 80
+        volumeMounts:
+          - name: frontend-html
+            mountPath: /usr/share/nginx/html
+      - name: backend
+        image: php:7.4-apache
+        ports:
+          - containerPort: 80
+        volumeMounts:
+          - name: backend-php
+            mountPath: /var/www/html/guestbook.php
+            subPath: guestbook.php
+      volumes:
+        - name: frontend-html
+          configMap:
+            name: kube-frontend-html
+        - name: backend-php
+          configMap:
+            name: kube-backend-php
