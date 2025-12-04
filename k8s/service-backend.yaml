@@ -7,7 +7,7 @@ spec:
     app: kube-multi
   ports:
   - protocol: TCP
-    port: 5678
-    targetPort: 5678
+    port: 8080
+    targetPort: 8080
     nodePort: 30081
   type: NodePort
