@@ -1,33 +1,43 @@
 <?php
-// dbcreds.php palauttaa taulukon salasanoineen
-$dbs = include '/var/www/dbcreds.php';
-$db = $dbs['demo'];
+$dbconfig = include '/var/www/dbcreds.php';
+$demo = $dbconfig['demo'];
 
-$conn = new mysqli($db['host'], $db['user'], $db['pass'], $db['db']);
-
-if ($conn->connect_error) {
+try {
+    $pdo = new PDO(
+        "mysql:host={$demo['host']};dbname={$demo['db']};charset=utf8mb4",
+        $demo['user'],
+        $demo['pass'],
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    );
+} catch (Exception $e) {
+    file_put_contents('/tmp/guestbook_error.log', "DB CONNECT ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
     http_response_code(500);
-    echo json_encode(["error" => "DB connection failed"]);
+    echo json_encode(['error' => 'Database connection failed']);
     exit;
 }
 
-// POST: lisää uusi viesti
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = $_POST['name'] ?? '';
-    $message = $_POST['message'] ?? '';
-    $stmt = $conn->prepare("INSERT INTO guestbook (name, message) VALUES (?, ?)");
-    $stmt->bind_param("ss", $name, $message);
-    $stmt->execute();
-    $stmt->close();
-    echo json_encode(["status" => "ok"]);
+$name = trim($_POST['name'] ?? '');
+$message = trim($_POST['message'] ?? '');
+
+if ($name === '' || $message === '') {
+    http_response_code(400);
+    echo json_encode(['error' => 'Empty name or message']);
     exit;
 }
 
-// GET: hae kaikki viestit
-$result = $conn->query("SELECT name, message, created_at FROM guestbook ORDER BY id DESC");
-$messages = [];
-while ($row = $result->fetch_assoc()) {
-    $messages[] = $row;
+try {
+    $stmt = $pdo->prepare("INSERT INTO guestbook (name, message, created_at) VALUES (:name, :message, NOW())");
+    $stmt->execute(['name' => $name, 'message' => $message]);
+} catch (Exception $e) {
+    file_put_contents('/tmp/guestbook_error.log', "INSERT ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
+    http_response_code(500);
+    echo json_encode(['error' => 'DB insert failed']);
+    exit;
 }
+
+// Hae kaikki viestit
+$stmt = $pdo->query("SELECT name, message, created_at FROM guestbook ORDER BY id DESC");
+$messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 header('Content-Type: application/json');
 echo json_encode($messages);
