@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dbcreds-php
+data:
+  dbcreds.php: |
+    <?php
+    return [
+        "demo" => [
+            "host" => getenv('DB_HOST') ?: "db",
+            "user" => getenv('DB_USER') ?: "demo",
+            "pass" => getenv('DB_PASS') ?: "",
+            "db"   => getenv('DB_NAME') ?: "demo"
+        ]
+    ];

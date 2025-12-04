@@ -24,10 +24,34 @@ spec:
         image: php:7.4-apache
         ports:
           - containerPort: 8080
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_HOST
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_PASS
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: DB_NAME
         volumeMounts:
           - name: backend-php
             mountPath: /var/www/html/guestbook.php
             subPath: guestbook.php
+          - name: dbcreds
+            mountPath: /var/www/dbcreds.php
+            subPath: dbcreds.php
       volumes:
         - name: frontend-html
           configMap:
@@ -35,3 +59,6 @@ spec:
         - name: backend-php
           configMap:
             name: kube-backend-php
+        - name: dbcreds
+          configMap:
+            name: dbcreds-php

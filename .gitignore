@@ -5,3 +5,4 @@ mosquitto/log/
 *.pyc
 .env
 /dbcreds.py
+k8s/OHJEET.md

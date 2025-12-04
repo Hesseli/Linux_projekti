@@ -6,7 +6,7 @@ data:
   guestbook.php: |
     <?php
     // dbcreds.php palauttaa taulukon salasanoineen
-    $dbconfig = include '/var/www/dbcreds.php';
+    $dbconfig = require '/var/www/dbcreds.php';
     $demo = $dbconfig['demo'];
 
     try {
