@@ -1,0 +1,36 @@
+name: Deploy CI/CD App
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install Docker Compose
+      run: sudo apt-get install docker-compose -y
+
+    - name: Run Tests
+      run: |
+        docker-compose -f cicd/docker-compose.yml up -d backend
+        sleep 5
+        pip install requests pytest
+        pytest cicd/tests/test_api.py
+
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd Linux_projekti
+          git pull
+          cd cicd
+          docker compose down
+          docker compose up -d --build

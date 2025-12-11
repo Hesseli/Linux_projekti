@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    container_name: cicd-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - backend_data:/data
+
+  frontend:
+    build: ./frontend
+    container_name: cicd-frontend
+    ports:
+      - "4000:80"
+
+volumes:
+  backend_data:
