@@ -9,6 +9,10 @@ if not os.path.exists(DATA_FILE):
     with open(DATA_FILE, 'w') as f:
         json.dump([], f)
 
+@app.route("/")
+def root():
+        return {"api": "ok", "endpoints": ["/messages"]}, 200
+
 @app.route("/messages", methods=["GET", "POST"])
 def messages():
     with open(DATA_FILE, 'r') as f:
