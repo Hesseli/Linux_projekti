@@ -1,36 +1,53 @@
-name: Deploy CI/CD App
+name: build-test-deploy
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build-test-deploy:
+  ci_cd_pipeline:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-    - name: Install Docker Compose
-      run: sudo apt-get install docker-compose -y
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
-    - name: Run Tests
-      run: |
-        docker-compose -f cicd/docker-compose.yml up -d backend
-        sleep 5
-        pip install requests pytest
-        pytest cicd/tests/test_api.py
+      - name: Install Python dependencies
+        run: |
+          pip install pytest requests
 
-    - name: Deploy to server
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USER }}
-        key: ${{ secrets.SSH_KEY }}
-        script: |
-          cd Linux_projekti
-          git pull
-          cd cicd
-          docker compose down
-          docker compose up -d --build
+      # Build backend image
+      - name: Build backend container
+        run: |
+          docker build -t backend cicd/backend
+
+      # Start backend container locally for tests
+      - name: Start backend for testing
+        run: |
+          docker run -d -p 5000:5000 --name backend backend
+          sleep 3
+
+      # Run real tests against live backend
+      - name: Run tests
+        run: |
+          pytest cicd/tests -q
+
+      # Deploy to VPS
+      - name: Deploy to server via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
+          script: |
+            cd ~/Linux_projekti
+            git pull
+            cd cicd
+            docker compose down
+            docker compose up -d --build
